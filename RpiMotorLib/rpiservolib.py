@@ -14,7 +14,9 @@
 # Import the system modules needed to run rpiMotorlib.py
 import sys
 import time
+
 import RPi.GPIO as GPIO
+
 
 # ==================== CLASS SECTION ===============================
 
@@ -96,9 +98,13 @@ class SG90servo(object):
                     time.sleep(delay)
 
         except KeyboardInterrupt:
-            print("CTRL-C: RpiMotorLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiMotorLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         finally:
             if verbose:
                 print("\nRpiMotorLib, Servo Sweep finished, Details:.\n")
@@ -149,9 +155,13 @@ class SG90servo(object):
                 pwm_servo.start(position)
                 time.sleep(delay)
         except KeyboardInterrupt:
-            print("CTRL-C: RpiServoLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiServoLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         else:
             if verbose:
                 print("\nRpiMotorLib, Servo Single Move finished, Details:.\n")
@@ -171,8 +181,8 @@ class SG90servo(object):
         returns duty cycle float"""
         x_two = 180
         x_one = 0
-        slope = (self.y_two-self.y_one)/(x_two-x_one)
-        duty_cycle = slope*(degree-x_one) + self.y_one
+        slope = (self.y_two - self.y_one) / (x_two - x_one)
+        duty_cycle = slope * (degree - x_one) + self.y_one
         return duty_cycle
 
     def servo_move_step(self, servo_pin, start=10, end=170, stepdelay=1,
@@ -203,7 +213,7 @@ class SG90servo(object):
         servo_move_step(26, 10, 180, 2, 20, 1, True)
         """
         if start > end:
-            stepsize = (stepsize)*-1
+            stepsize = (stepsize) * -1
 
         GPIO.setup(servo_pin, GPIO.OUT)
         self.stop_servo = False
@@ -212,7 +222,7 @@ class SG90servo(object):
         try:
             start_dc = self.convert_from_degree(start)
             pwm_servo.start(start_dc)
-            for i in range(start, end+stepsize, stepsize):
+            for i in range(start, end + stepsize, stepsize):
                 if self.stop_servo:
                     raise StopServoInterrupt
                 else:
@@ -222,9 +232,13 @@ class SG90servo(object):
                     pwm_servo.ChangeDutyCycle(end_pwm)
                     time.sleep(stepdelay)
         except KeyboardInterrupt:
-            print("CTRL-C: RpiMotorLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiMotorLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         except Exception as error:
             print(sys.exc_info()[0])
             print(error)
@@ -251,6 +265,7 @@ def importtest(text):
     pass
     # print(text)
 
+
 # ===================== MAIN ===============================
 
 
@@ -258,6 +273,5 @@ if __name__ == '__main__':
     importtest("main")
 else:
     importtest("Imported {}".format(__name__))
-
 
 # ===================== END ===============================

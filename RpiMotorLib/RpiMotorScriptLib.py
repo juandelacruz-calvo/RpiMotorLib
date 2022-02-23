@@ -19,6 +19,7 @@ __version__ = "3.1-2"
 __author__ = "Gavin Lyons"
 __url__ = "https://github.com/gavinlyonsrepo/RpiMotorLib"
 
+
 # ====================FUNCTION SECTION===============================
 
 
@@ -41,12 +42,12 @@ def process_cmd_arguments():
 def main(args):
     """main function"""
     if len(sys.argv) == 1:
-       print("usage: RpiMotorScriptLib.py [-h] [-v]")
+        print("usage: RpiMotorScriptLib.py [-h] [-v]")
 
     # display version
     if args.version:
         print("rpiMotorlib " + __version__)
-        
+
     print("BYE")
 
 

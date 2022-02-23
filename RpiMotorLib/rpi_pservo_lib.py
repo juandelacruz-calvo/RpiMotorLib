@@ -14,12 +14,15 @@
 # Import the system modules needed to run rpiMotorlib.py
 import sys
 import time
+
 import pigpio
+
 
 # ==================== CLASS SECTION ===============================
 class StopServoInterrupt(Exception):
     """ Stop the servo """
     pass
+
 
 class ServoPigpio(object):
     """A Class to control a servo with pigpio library PWM by raspberry pi
@@ -90,7 +93,8 @@ class ServoPigpio(object):
         self.stop_servo = False
         pi_servo = self._get_pi_servo()
         if not pi_servo.connected:
-            print("RpiMotorLib : failed to connect to pigpio Daemon")
+            if verbose:
+                print("RpiMotorLib : failed to connect to pigpio Daemon")
             exit()
         pi_servo.set_mode(servo_pin, pigpio.OUTPUT)
         time.sleep(initdelay)
@@ -117,9 +121,13 @@ class ServoPigpio(object):
                     sweeplen -= 1
                     time.sleep(delay)
         except KeyboardInterrupt:
-            print("CTRL-C: RpiMotorLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiMotorLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         finally:
             if verbose:
                 print("\nRpiMotorLib, Servo Sweep finished, Details:.\n")
@@ -167,9 +175,13 @@ class ServoPigpio(object):
                 pi_servo.set_servo_pulsewidth(servo_pin, position)
                 time.sleep(delay)
         except KeyboardInterrupt:
-            print("CTRL-C: RpiServoLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiServoLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         else:
             if verbose:
                 print("\nRpiMotorLib, Servo Single Move finished, Details:.\n")
@@ -189,8 +201,8 @@ class ServoPigpio(object):
         returns duty cycle float"""
         x_two = 180
         x_one = 0
-        slope = (self.y_two-self.y_one)/(x_two-x_one)
-        pulse_width = slope*(degree-x_one) + self.y_one
+        slope = (self.y_two - self.y_one) / (x_two - x_one)
+        pulse_width = slope * (degree - x_one) + self.y_one
         return pulse_width
 
     def servo_move_step(self, servo_pin, start=10, end=170, stepdelay=1,
@@ -215,7 +227,7 @@ class ServoPigpio(object):
          help="Output actions & details",
         """
         if start > end:
-            stepsize = (stepsize)*-1
+            stepsize = (stepsize) * -1
         self.stop_servo = False
         pi_servo = self._get_pi_servo()
         pi_servo.set_mode(servo_pin, pigpio.OUTPUT)
@@ -224,7 +236,7 @@ class ServoPigpio(object):
         try:
             start_dc = self.convert_from_degree(start)
             pi_servo.set_servo_pulsewidth(servo_pin, start_dc)
-            for i in range(start, end+stepsize, stepsize):
+            for i in range(start, end + stepsize, stepsize):
                 if self.stop_servo:
                     raise StopServoInterrupt
                 else:
@@ -234,13 +246,18 @@ class ServoPigpio(object):
                     pi_servo.set_servo_pulsewidth(servo_pin, end_pwm)
                     time.sleep(stepdelay)
         except KeyboardInterrupt:
-            print("CTRL-C: RpiServoLib: Terminating program.")
+            if verbose:
+                print("CTRL-C: RpiServoLib: Terminating program.")
+            raise
         except StopServoInterrupt:
-            print("Stop Servo Interrupt : RpiMotorLib: ")
+            if verbose:
+                print("Stop Servo Interrupt : RpiMotorLib: ")
+            raise
         except Exception as error:
             print(sys.exc_info()[0])
             print(error)
-            print("RpiServoLib  : Unexpected error:")
+            if verbose:
+                print("RpiServoLib  : Unexpected error:")
         else:
             if verbose:
                 print("\nRpiMotorLib, Servo move finished, Details:.\n")
@@ -263,6 +280,7 @@ def importtest(text):
     pass
     # print(text)
 
+
 # ===================== MAIN ===============================
 
 
@@ -270,6 +288,5 @@ if __name__ == '__main__':
     importtest("main")
 else:
     importtest("Imported {}".format(__name__))
-
 
 # ===================== END ===============================

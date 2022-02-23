@@ -21,7 +21,9 @@
 # ========================== IMPORTS ======================
 # Import the system modules needed to run rpiMotorlib.py
 import time
+
 import RPi.GPIO as GPIO
+
 
 # ==================== CLASS SECTION ===============================
 
@@ -201,6 +203,7 @@ class DRV8833NmDc():
 
 class TranDc():
     """ Class to control DC motor via a transistor """
+
     def __init__(self, pin, freq=50, verbose=False):
         """ init method
         (1) pin_one, type=int,  GPIO pin connected base of transistor
@@ -273,7 +276,6 @@ class TB6612FNGDc():
             print(" Pin pwm PWA or PWB:  {}".format(self.pwm_pin))
             print(" Frequency: {} ".format(self.freq))
 
-
     def standby(standby_pin, standby_on=True):
         """Enables/disables the  standby mode of TB661FNG controller"""
         GPIO.setmode(GPIO.BCM)
@@ -335,12 +337,11 @@ class TB6612FNGDc():
             GPIO.cleanup()
 
 
-
-
 def importtest(text):
     """import print test statement"""
     pass
     # print(text)
+
 
 # ===================== MAIN ===============================
 
@@ -349,6 +350,5 @@ if __name__ == '__main__':
     importtest("main")
 else:
     importtest("Imported {}".format(__name__))
-
 
 # ===================== END ===============================
